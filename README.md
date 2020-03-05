@@ -10,6 +10,10 @@ but not for others, collecting more American customer data will only bias the mo
 selectively collect data and propose Slice Tuner, which collects possibly different amounts of data per slice 
 such that the model accuracy and fairness on all slices are optimized. 
 
+## Example
+![customers1](https://user-images.githubusercontent.com/29707304/75939970-1f06c500-5ecf-11ea-97c5-b5a618def0d2.png)
+![customers2](https://user-images.githubusercontent.com/29707304/75939980-275f0000-5ecf-11ea-8a9e-262002ab0f27.png)
+
 At its core, Slice Tuner maintains learning curves of slices that estimate the model accuracies given more data and uses 
 convex optimization o find the best data collection strategy. The key challenges of estimating learning curves are that they may
 be inaccurate if there is not enough data, and there may be dependencies among slices where collecting data for one
