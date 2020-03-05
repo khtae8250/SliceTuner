@@ -1,3 +1,5 @@
+# Slice Tuner: A Selective Data Collection Framework for Accurate and Fair Machine Learning Models
+
 As machine learning becomes democratized in the era of Software 2.0, one of the most serious bottlenecks is collecting
 enough labeled data to ensure accurate and fair models. Recent techniques including crowdsourcing provide cost-effective
 ways to gather such data. 
@@ -15,5 +17,5 @@ slice in uences the learning curves of others.
 
 We solve these issues by iteratively and efficiently updating the learning
 curves as more data is collected. We evaluate Slice Tuner on real datasets using crowdsourcing for data collection and
-show that Slice Tuner signicantly outperforms baselines in terms of model accuracy and fairness, even for initially small
+show that Slice Tuner significantly outperforms baselines in terms of model accuracy and fairness, even for initially small
 slices. We believe Slice Tuner is a practical tool for suggesting concrete action items based on model analysis.
