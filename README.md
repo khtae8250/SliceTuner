@@ -15,10 +15,9 @@ such that the model accuracy and fairness on all slices are optimized.
 ![customers2](https://user-images.githubusercontent.com/29707304/75939980-275f0000-5ecf-11ea-8a9e-262002ab0f27.png)
 
 ## Slice Tuner
-At its core, Slice Tuner maintains learning curves of slices that estimate the model accuracies given more data and uses 
-convex optimization o find the best data collection strategy. The key challenges of estimating learning curves are that they may
-be inaccurate if there is not enough data, and there may be dependencies among slices where collecting data for one
-slice in uences the learning curves of others. 
+Slice Tuner maintains learning curves of slices that estimate the model accuracies given more data and uses convex optimization 
+to find the best data collection strategy. The key challenges of estimating learning curves are that they may be inaccurate 
+if there is not enough data, and there may be dependencies among slices where collecting data for one slice infuences the learning curves of others. 
 
 We solve these issues by iteratively and efficiently updating the learning
 curves as more data is collected. We evaluate Slice Tuner on real datasets using crowdsourcing for data collection and
