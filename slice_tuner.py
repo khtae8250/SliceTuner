@@ -84,7 +84,12 @@ class SliceTuner:
         print("Loss: %.5f, Average EER: %.5f, Max EER: %.5f\n" % tuple(self.show_performance()))
     
     def train_after_collect_data(self, num_examples, num_iter):
-        """ Trains the model after we collect num_examples of data """
+        """ Trains the model after we collect num_examples of data
+        
+        Args:
+            num_examples: Number of examples to collect per slice 
+            num_iter: Number of training times
+        """
         
         self.collect_data(num_examples)
         for i in range(num_iter):
@@ -102,8 +107,11 @@ class SliceTuner:
                     
     def collect_data(self, num_examples):
         """ 
-            Collects num_examples of data from add_data_dict
-            add_data_dict could be changed to any other data collection tool
+        Collects num_examples of data from add_data_dict
+        add_data_dict could be changed to any other data collection tool
+        
+        Args:
+            num_examples: Number of examples to collect per slice 
         """
         
         def shuffle(data, label):
@@ -124,7 +132,13 @@ class SliceTuner:
         self.train = (train_data, train_label)
     
     def train_on_subsets(self, num_k, num_iter):
-        """ Given the slices, we generate for each slice k random subsets of data to fit a power-law curve. """
+        """ 
+        Given the slices, we generate for each slice k random subsets of data to fit a power-law curve.
+        
+        Args: 
+            num_k: Subsets of the train set with different sizes
+            num_iter: Number of training times
+        """
         
         self.batch_size = self.train[0].shape[0]
         
@@ -144,13 +158,32 @@ class SliceTuner:
                         self.slice_num[j].append(slice_num[j])
     
     def one_shot(self, slice_desc, show_figure):
-        """ Fits the learning curve, and solves the optimization problem using entire budget """
+        """ 
+        Fits the learning curve, and solves the optimization problem using entire budget 
+        
+        Args:
+            slice_desc: Array for slice description (e.g., Slice: White_Male)
+            show_figure: If True, show learning curves for all slices
+        
+        Return: Number of examples to collect for the slices within the budget
+        """
         
         A, B, estimate_loss = self.fit_learning_curve(slice_desc, show_figure)
-        return self.op_func(A, B, self.data_num_array, estimate_loss)
+        return self.op_func(A, B, estimate_loss)
         
     def fit_learning_curve(self, slice_desc, show_figure):
-        """ Fits the learning curve, assuming power-law form """
+        """ 
+        Fits the learning curve, assuming power-law form 
+        
+        Args:
+            slice_desc: Array for slice description (e.g., Slice: White_Male)
+            show_figure: If True, show learning curves for all slices
+            
+        Returns:
+            A: Exponent of power-law equation
+            B: of power-law equation
+            estimate_loss: estimated loss on given data using power-law equation
+        """
         
         def weight_list(weight):
             w_list = []
@@ -194,7 +227,6 @@ class SliceTuner:
             Aggressive: For each iteration, multiply T by 2
             Linear: For each iteration, increase T by 1
             Conservative: Leave T as a constant
-        
         """
         
         if strategy == "aggressive":
@@ -204,7 +236,14 @@ class SliceTuner:
         
         
     def get_imbalance_ratio(self, data_array):
-        """ Calculate imbalance ratio of the data """
+        """ 
+        Calculate imbalance ratio of the data 
+        
+        Args:
+            data_array: Number of data for slices
+        
+        Return: Imbalance ratio
+        """
         
         return max(data_array) / min(data_array)
 
@@ -212,6 +251,13 @@ class SliceTuner:
         """
         If the imbalance ratio change would exceed T when using the entire budget, 
         limit the number of examples collected by the target_ratio by solving a non-linear equation
+        
+        Args:
+            data_array: Number of data for slices
+            num_examples: Number of examples to collect per slice 
+            target_ratio: Imbalance ratio limit
+        
+        Return: ratio that makes the imbalance ratio change would not exceed target ratio
         """
         
         def F(x, num, add, target):
@@ -227,12 +273,21 @@ class SliceTuner:
 
         return ratio
     
-    def op_func(self, A, B, N, estimate_loss):
-        """ Solves the convex optimzation problem """
+    def op_func(self, A, B, estimate_loss):
+        """ 
+        Solves the convex optimzation problem 
+        
+        Args:
+            A: Exponent of power-law equation
+            B: of power-law equation
+            estimate_loss: estimated loss on given data using power-law equation
+        
+        Return: Number of examples to collect for the slices within the budget
+        """
         
         x = cp.Variable(self.num_class, integer=True)
         for i in range(self.num_class):
-            loss = cp.multiply(B[i], cp.power((x[i]+N[i]), A[i]))
+            loss = cp.multiply(B[i], cp.power((x[i]+self.data_num_array[i]), A[i]))
             counter_loss = (np.sum(estimate_loss) - estimate_loss[i]) / (self.num_class - 1)
             if i==0:
                 ob_func = loss + self.Lambda * cp.maximum(0, (loss / counter_loss) - 1)
