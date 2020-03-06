@@ -42,7 +42,15 @@ class CNN:
         self.accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))    
         
     def build_CNN_classifier(self, x):
-        """ Builds a network """
+        """ 
+        Builds a network 
+        
+        Args: 
+            x: input data
+        Returns:
+            y_pred: network prediction for x
+            logits: activation value for x after the final layer
+        """
         
         x_image = tf.reshape(x, [-1,28,28,1])
         conv1 = tf.layers.conv2d(inputs=x_image,
@@ -107,11 +115,13 @@ class CNN:
                     for j in range(self.num_class):
                         loss_dict[j] = self.loss.eval(feed_dict={self.x: self.val_data_dict[j][0], self.y: self.val_data_dict[j][1]})
         
-#         print(loss_dict, slice_num)
         return loss_dict, slice_num
                         
     def check_num(self, labels):
-        """ Checks the number of data per each slice """
+        """ Checks the number of data per each slice 
+        Args:
+            labels: Array that contains only label
+        """
         
         slice_num = dict()
         for j in range(self.num_class):
