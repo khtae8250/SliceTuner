@@ -56,7 +56,12 @@ class Uniform:
 
 
     def train_after_collect_data(self, num_examples, num_iter):
-        """ Trains the model after we collect num_examples of data """
+        """ Trains the model after we collect num_examples of data
+        
+        Args:
+            num_examples: Number of examples to collect per slice 
+            num_iter: Number of training times
+        """
         
         self.batch_size = self.train[0].shape[0]
         self.collect_data(num_examples)
@@ -74,8 +79,11 @@ class Uniform:
                     
     def collect_data(self, num_examples):
         """ 
-            Collects num_examples of data from add_data_dict
-            add_data_dict could be changed to any other data collection tool
+        Collects num_examples of data from add_data_dict
+        add_data_dict could be changed to any other data collection tool
+        
+        Args:
+            num_examples: Number of examples to collect per slice 
         """
         
         def shuffle(data, label):
